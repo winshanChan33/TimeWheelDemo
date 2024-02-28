@@ -20,8 +20,8 @@
 
 主要依赖两个存储结构：
 
-- 任务映射列表 `ConcurrentDictionary<string, IJob> m_scheduleTasks`
-- 时间调度列表 `ConcurrentDictionary<long, HashSet<string>> m_timeTasks`
+- 任务映射列表 `ConcurrentDictionary<string, IJob> m_scheduleTasksMap`
+- 时间调度列表 `ConcurrentDictionary<long, HashSet<string>> m_timeTasksMap`
 
 转动一次称之为一个 tick，每个 tick 检测任务列表中是否存在合法定时器任务，如果存在，则将其添加到时间调度列表中，在下一个 tick 中执行。
 
