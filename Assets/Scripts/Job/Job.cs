@@ -39,5 +39,14 @@ namespace TimeWheel
             return m_scheduleTask.GetNextTime();
         }
 
+        public void ModifyTaskParams(params object[] args)
+        {
+            m_scheduleTask.ModifyParams(args);
+        }
+
+        public void ModifyExcute(Action<string> action)
+        {
+            m_action = action;
+        }
     }
 }

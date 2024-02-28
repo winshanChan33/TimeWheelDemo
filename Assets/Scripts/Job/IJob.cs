@@ -8,5 +8,7 @@ namespace TimeWheel
         public void Excute();
         public void Cancel();
         public DateTime? GetNextTime();
+        public void ModifyExcute(Action<string> action);
+        public void ModifyTaskParams(params object[] args);
     }
 }

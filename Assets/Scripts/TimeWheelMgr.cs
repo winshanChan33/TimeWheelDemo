@@ -10,6 +10,8 @@ namespace TimeWheel
 {
     public class TimeWheelMgr
     {
+        public bool CheckExctuteTime { get; set; } = false;
+
         // 时间调度列表，ts->任务id列表 映射
         private ConcurrentDictionary<long, HashSet<string>> m_timeTasks = new();
         // 任务列表，任务id->Job 映射
@@ -29,11 +31,18 @@ namespace TimeWheel
                     var timeStamp = GetTimeStamp(DateTime.Now);
                     Task.Run(() =>
                     {
-                        Stopwatch watch = new();
-                        watch.Start();
-                        Trigger(timeStamp);
-                        watch.Stop();
-                        // UnityEngine.Debug.Log("执行100万个定时器耗时：" + watch.Elapsed.TotalMilliseconds + " s");
+                        if (CheckExctuteTime)
+                        {
+                            Stopwatch watch = new();
+                            watch.Start();
+                            Trigger(timeStamp);
+                            watch.Stop();
+                            UnityEngine.Debug.Log("执行100万个定时器耗时：" + watch.Elapsed.TotalMilliseconds + "秒");
+                        }
+                        else
+                        {
+                            Trigger(timeStamp);
+                        }
                     });
                     
                     // 修正时间间隔
@@ -119,12 +128,12 @@ namespace TimeWheel
             AddScheduleTask(1, callback, delay, 1);     // interval传入1，避免NextTime返回空值
         }
 
-        public IJob AddScheduleTask(int interval, Action<string> callback, int delay = 0, int loopTimes = -1)
+        public string AddScheduleTask(int interval, Action<string> callback, int delay = 0, int loopTimes = -1)
         {
             m_idSeed++;
             IJob job = new Job("TimeTask" + m_idSeed, new TimeTask(interval, delay, loopTimes), callback);
             AddTask(job);
-            return job;
+            return job.ID;
         }
 
         public void RemoveScheduleTask(string id)
@@ -146,9 +155,28 @@ namespace TimeWheel
         /*
             修改定时任务属性
         */
-        public void ModifyScheduleTask(string id, int interval, int loopTimes = -1, Action callback = null)
+        public void ModifyScheduleTaskInterval(string id, int interval)
         {
-            // todo
+            if (m_scheduleTasks.TryGetValue(id, out IJob job))
+            {
+                job.ModifyTaskParams(interval);
+            }
+        }
+
+        public void ModifyScheduleTaskLoopTimes(string id, int loopTimes)
+        {
+            if (m_scheduleTasks.TryGetValue(id, out IJob job))
+            {
+                job.ModifyTaskParams(-1, loopTimes);
+            }
+        }
+
+        public void ModifyScheduleTaskAction(string id, Action<string> callback)
+        {
+            if (m_scheduleTasks.TryGetValue(id, out IJob job))
+            {
+                job.ModifyExcute(callback);
+            }
         }
 
         #endregion

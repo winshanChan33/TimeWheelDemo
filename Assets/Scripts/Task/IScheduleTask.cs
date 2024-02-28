@@ -6,6 +6,6 @@ namespace TimeWheel
     public interface IScheduleTask
     {
         public DateTime? GetNextTime();     // 获取下一个时间点
-        // public void ModifyParams();         // todo
+        public void ModifyParams(params object[] args);         // 定时器参数修改器
     }
 }
