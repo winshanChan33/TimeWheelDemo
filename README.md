@@ -7,12 +7,12 @@
 提供的外部接口包括：
 
 1. `DelayInvoke(int delay, Action callback)`: 延迟执行回调。参数 `delay` 表示延迟的秒数，`callback` 是回调执行的逻辑。
-2. `AddScheduleTask(int interval, Action<string> callback)`: 增加一个定时器。参数 `interval` 表示时间间隔，`callback` 是执行回调的方法。返回值为定时器的唯一ID，可用于后续对该定时器进行修改。
-3. `RemoveScheduleTask(string id)`: 移除指定ID的定时器。
+2. `AddScheduleTask(int interval, Action<long> callback)`: 增加一个定时器。参数 `interval` 表示时间间隔，`callback` 是执行回调的方法。返回值为定时器的唯一ID，可用于后续对该定时器进行修改。
+3. `RemoveScheduleTask(long id)`: 移除指定ID的定时器。
 4. 修改定时器相关接口：
-   - `ModifyScheduleTaskInterval(string id, int interval)`: 修改定时器的时间间隔。
-   - `ModifyScheduleTaskLoopTimes(string id, int loopTimes)`: 修改定时器的执行次数。
-   - `ModifyScheduleTaskAction(string id, Action<string> callback)`: 修改定时器的执行回调。
+   - `ModifyScheduleTaskInterval(long id, int interval)`: 修改定时器的时间间隔。
+   - `ModifyScheduleTaskLoopTimes(long id, int loopTimes)`: 修改定时器的执行次数。
+   - `ModifyScheduleTaskAction(long id, Action<long> callback)`: 修改定时器的执行回调。
 
 ## 结构
 
@@ -20,8 +20,8 @@
 
 主要依赖两个存储结构：
 
-- 任务映射列表 `ConcurrentDictionary<string, IJob> m_scheduleTasksMap`
-- 时间调度列表 `ConcurrentDictionary<long, HashSet<string>> m_timeTasksMap`
+- 任务映射列表 `ConcurrentDictionary<long, IJob> m_scheduleTasksMap`
+- 时间调度列表 `ConcurrentDictionary<long, HashSet<long>> m_timeTasksMap`
 
 转动一次称之为一个 tick，每个 tick 检测任务列表中是否存在合法定时器任务，如果存在，则将其添加到时间调度列表中，在下一个 tick 中执行。
 

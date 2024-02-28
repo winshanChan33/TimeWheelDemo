@@ -4,49 +4,55 @@ namespace TimeWheel
 {
     public class Job : IJob
     {
-        private string m_id;
-        public string ID
+        private long m_Id;
+        public long ID
         {
-            get { return m_id; }
+            get { return m_Id; }
         }
 
-        private Action<string> m_action;                // 任务执行回调
-        private IScheduleTask m_scheduleTask;   // 时间调度任务
-        private bool m_isCancel = false;
+        private Action<long, object, object> m_Action;                // 任务执行回调
+        private object m_Args1;
+        private object m_Args2;
+        private IScheduleTask m_ScheduleTask;   // 时间调度任务
+        private bool m_IsCancel = false;
 
-        public Job(string id, IScheduleTask task, Action<string> action = null)
+        public Job(long id, IScheduleTask task, Action<long, object, object> action = null, object args1 = default, object args2 = default)
         {
-            m_id = id;
-            m_action = action;
-            m_scheduleTask = task;
+            m_Id = id;
+            m_Action = action;
+            m_Args1 = args1;
+            m_Args2 = args2;
+            m_ScheduleTask = task;
         }
 
         public void Cancel()
         {
-            m_isCancel = true;
+            m_IsCancel = true;
         }
 
         public void Excute()
         {
-            if (!m_isCancel)
+            if (!m_IsCancel)
             {
-                m_action?.Invoke(ID);
+                m_Action?.Invoke(ID, m_Args1, m_Args2);
             }
         }
 
         public DateTime? GetNextTime()
         {
-            return m_scheduleTask.GetNextTime();
+            return m_ScheduleTask.GetNextTime();
         }
 
         public void ModifyTaskParams(params object[] args)
         {
-            m_scheduleTask.ModifyParams(args);
+            m_ScheduleTask.ModifyParams(args);
         }
 
-        public void ModifyExcute(Action<string> action)
+        public void ModifyExcute(Action<long, object, object> action, object args1, object args2)
         {
-            m_action = action;
+            m_Action = action;
+            m_Args1 = args1;
+            m_Args2 = args2;
         }
     }
 }
