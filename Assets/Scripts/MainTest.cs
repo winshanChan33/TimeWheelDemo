@@ -64,7 +64,7 @@ public class MainTest : MonoBehaviour
         m_timeWheelInstance.AddScheduleTask(2, (id) => { UnityEngine.Debug.Log("定时器1：正在执行间隔2s，只执行5次的定时器"); }, 0, 5);
         
         // 延迟执行方法
-        m_timeWheelInstance.DelayInvoke(5, (id) => { UnityEngine.Debug.Log("定时器2：延迟5s执行的方法"); });
+        m_timeWheelInstance.DelayInvoke(5, () => { UnityEngine.Debug.Log("定时器2：延迟5s执行的方法"); });
 
         // 执行间隔为1s的定时器
         int tick = 0;
@@ -93,7 +93,7 @@ public class MainTest : MonoBehaviour
                 m_timeWheelInstance.ModifyScheduleTaskAction(id, (id) => { UnityEngine.Debug.Log("定时器4：正在执行间隔2s"); });
             }
         });
-        m_timeWheelInstance.DelayInvoke(50, (id) =>
+        m_timeWheelInstance.DelayInvoke(50, () =>
         {
             UnityEngine.Debug.Log("在定时器4添加之后，延迟50s将定时器4的执行次数修改为5次");
             m_timeWheelInstance.ModifyScheduleTaskLoopTimes(scheduleId, 5);

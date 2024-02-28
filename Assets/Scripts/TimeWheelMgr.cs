@@ -123,9 +123,9 @@ namespace TimeWheel
         }
 
         #region 外部接口
-        public void DelayInvoke(int delay, Action<string> callback)
+        public void DelayInvoke(int delay, Action callback)
         {
-            AddScheduleTask(1, callback, delay, 1);     // interval传入1，避免NextTime返回空值
+            AddScheduleTask(1, (id) => { callback.Invoke(); }, delay, 1);     // interval传入1，避免NextTime返回空值
         }
 
         public string AddScheduleTask(int interval, Action<string> callback, int delay = 0, int loopTimes = -1)
