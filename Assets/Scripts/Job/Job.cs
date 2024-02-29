@@ -1,6 +1,6 @@
 using System;
 
-namespace TimeWheel
+namespace TimeWheelDemo
 {
     public class Job : IJob
     {
@@ -38,9 +38,14 @@ namespace TimeWheel
             }
         }
 
-        public DateTime? GetNextTime()
+        public DateTime GetNextTime()
         {
-            return m_ScheduleTask.GetNextTime();
+            return m_ScheduleTask.DateTime;
+        }
+
+        public bool CheckLoop()
+        {
+            return m_ScheduleTask.CheckLoop();
         }
 
         public void ModifyTaskParams(params object[] args)

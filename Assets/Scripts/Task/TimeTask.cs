@@ -1,6 +1,6 @@
 using System;
 
-namespace TimeWheel
+namespace TimeWheelDemo
 {
     /*
         时间调度任务，普通任务
@@ -8,36 +8,35 @@ namespace TimeWheel
     */
     public class TimeTask : IScheduleTask
     {
-        private int m_Interval;
-        private int m_Delay;
-        private bool m_InitFlag;
+        public DateTime DateTime { get { return m_DateTime; } }
+        private DateTime m_DateTime;
+        private float m_Interval;
         private int m_LoopTimes;
         private int m_CurScheduleTimes;     // 当前调度次数
-
-        public TimeTask(int interval, int delay = 0, int loopTimes = -1)
+        
+        public TimeTask(float interval, float delay = 0, int loopTimes = -1)
         {
             m_Interval = interval;
-            m_Delay = delay;
-            m_InitFlag = true;
             m_LoopTimes = loopTimes;
             m_CurScheduleTimes = 0;
+            m_DateTime = DateTime.Now.AddSeconds((interval + delay));
         }
-        public DateTime? GetNextTime()
+
+        public bool CheckLoop()
         {
             m_CurScheduleTimes++;
-            if (m_LoopTimes > 0 && m_CurScheduleTimes > m_LoopTimes || m_Interval <= 0)
+            if (m_LoopTimes > 0 && m_CurScheduleTimes >= m_LoopTimes || m_Interval <= 0)
             {
-                return null;
+                return false;
             }
 
-            var interval = m_InitFlag && m_Delay > 0 ? m_Delay : m_Interval;
-            m_InitFlag = false;
-            return DateTime.Now.AddSeconds(interval);
+            m_DateTime = DateTime.Now.AddSeconds(m_Interval);
+            return true;
         }
 
         public void ModifyParams(params object[] args)
         {
-            int newInterval = args.Length > 0 ? (int)args[0] : -1;
+            float newInterval = args.Length > 0 ? (float)args[0] : -1;
             int newLoopTimes = args.Length > 1 ? (int)args[1] : -2;     // 随机指定一个负数，区别于-1为无限执行
             if (newInterval != -1 && newInterval != m_Interval)
             {
